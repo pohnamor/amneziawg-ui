@@ -130,7 +130,7 @@ RUN apk add --no-cache \
 
 RUN mkdir -p /var/log/amnezia /etc/amnezia/amneziawg
 
-COPY --from=awg /usr/bin/amneziawg-go /usr/bin/proxy
+COPY --from=awg /usr/bin/amneziawg-go /usr/bin/amneziawg-go
 COPY --from=awg-tools /usr/bin/awg /usr/bin/awg
 COPY --from=awg-tools /usr/bin/awg-quick /usr/bin/awg-quick
 COPY --from=builder /app/api /usr/bin/api
@@ -146,7 +146,7 @@ ENV WEB_UI_PORT=54845
 # awg-quick launches the userspace WireGuard implementation via this env var
 # (defaults to "amneziawg-go"); renaming the binary to "proxy" and pointing
 # awg-quick at it hides "amneziawg-go" from `ps aux` output.
-ENV WG_QUICK_USERSPACE_IMPLEMENTATION=proxy
+ENV WG_QUICK_USERSPACE_IMPLEMENTATION=amneziawg-go
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD wget -q -O /dev/null http://127.0.0.1:$WEB_UI_PORT/status || exit 1
