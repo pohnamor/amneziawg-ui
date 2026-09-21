@@ -1,0 +1,31 @@
+services:
+  amneziawg-ui:
+    container_name: amneziawg-ui
+    image: ghcr.io/pohnamor/amneziawg-ui:latest
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:54845:54845/tcp"   # веб-интерфейс
+      - "54844:54844/udp"   # VPN (Можно задать диапазон)
+    environment:
+      - WEB_UI_USER=admin
+      # base64(sha256(пароль)); значение ниже — это "admin", замените:
+      # printf 'ваш-пароль' | openssl dgst -binary -sha256 | base64
+      - WEB_UI_PASSWORD=jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg=
+      - DEFAULT_SUBNET=10.10.1.0/24
+      - DEFAULT_DNS=1.1.1.1,9.9.9.9
+    volumes:
+      - ./amnezia:/etc/amnezia
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    sysctls:
+      - net.ipv4.ip_forward=1
+      - net.ipv4.conf.all.src_valid_mark=1
+      - net.ipv6.conf.all.disable_ipv6=0
+      - net.ipv6.conf.all.forwarding=1
+      - net.ipv6.conf.default.forwarding=1
+    logging:
+      options:
+        max-size: 10m
+        max-file: 3
